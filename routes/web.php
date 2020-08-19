@@ -13,10 +13,13 @@ use Illuminate\Support\Facades\Route;
 |
 */
 
-Route::get('/', function () {
-    return view('welcome');
-});
+Route::redirect('/', '/home');
 
 Auth::routes();
 
 Route::get('/home', 'HomeController@index')->name('home');
+
+Route::post('/files', 'FilesController@store');
+Route::get('/files', 'FilesController@index');
+Route::get('/files/{file}', 'FilesController@show');
+Route::delete('/files/{file}', 'FilesController@delete');
