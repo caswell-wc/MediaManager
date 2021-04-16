@@ -3,6 +3,7 @@
 namespace Tests\Feature;
 
 use App\File;
+use App\User;
 use Illuminate\Foundation\Testing\RefreshDatabase;
 use Illuminate\Foundation\Testing\WithFaker;
 use Illuminate\Http\UploadedFile;
@@ -108,5 +109,42 @@ class FilesTest extends TestCase
         Storage::disk('s3')->assertMissing($fakeFile->hashName());
 
         $this->assertDatabaseMissing('files', ['id' => $file->id]);
+    }
+
+    /** @test */
+    public function aUserCannotViewOtherPeoplesFiles()
+    {
+        $this->signIn();
+        $otherUser = factory(User::class)->create();
+
+        $file = factory(File::class)->create(
+            [
+                'user_id' => $otherUser->id,
+            ]
+        );
+
+        $this->get('/files/' . $file->id)->assertStatus(403);
+    }
+
+    /** @test */
+    public function aUserCanViewTheirOwnFile()
+    {
+        Storage::fake('s3');
+
+        $user = $this->signIn();
+
+        $url = Storage::disk('s3')->put('test.jpg', UploadedFile::fake()->image('test.jpg'));
+
+        $file = factory(File::class)->create(
+            [
+                'user_id' => $user->id,
+                'name' => 'Test Image',
+                'path' => $url,
+                'type' => 'image'
+            ]
+        );
+
+        $response = $this->get('/files/' . $file->id);
+        $response->assertOk();
     }
 }

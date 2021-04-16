@@ -66,9 +66,11 @@ class FilesController extends Controller
      *
      * @param File $file
      * @return mixed
+     * @throws \Illuminate\Auth\Access\AuthorizationException
      */
     public function show(File $file)
     {
+        $this->authorize('view', $file);
         return Storage::disk('s3')->response($file->path);
     }
 
