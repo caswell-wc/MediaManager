@@ -53,6 +53,8 @@
 </template>
 
 <script>
+    import FilesService from "../services/FilesService";
+
     export default {
         data() {
             return {
@@ -63,38 +65,40 @@
                 showImage: true,
                 path: '',
                 currentFileName: '',
-                uploading: false
+                uploading: false,
+                filesService: {}
             }
         },
         created() {
-            axios.get('/files')
-                .then(response => this.files = response.data);
+            this.filesService = new FilesService();
+            this.loadFiles();
         },
         methods: {
+            async loadFiles() {
+                try {
+                    this.files = await this.filesService.getFiles();
+                } catch(error) {
+                    this.errors = ['Error loading files'];
+                }
+            },
             handleFileChange() {
                 this.newFile = this.$refs.file.files[0];
             },
-            uploadFile() {
+            async uploadFile() {
                 this.uploading = true;
                 this.errors = [];
 
-                let formData = new FormData();
-                formData.append('name', this.newName);
-                formData.append('file', this.newFile);
-
-                axios.post('/files', formData)
-                    .then(response => {
-                        this.files.push(response.data);
-                        this.uploading = false;
+                try {
+                    const file = await this.filesService.uploadFile(this.newName, this.newFile);
+                    this.files.push(file);
+                    this.uploading = false;
+                } catch (error) {
+                    const errors = error.errors;
+                    Object.keys(errors).forEach(key => {
+                        this.errors.concat(errors[key]);
                     })
-                    .catch(error => {
-                        let errors = error.response.data.errors;
-                        Object.keys(errors).forEach(key => {
-                            this.errors.concat(errors[key]);
-                        })
-                        this.errors = error.response.data.errors.file;
-                    });
-
+                    this.errors = error.errors.file;
+                }
             },
             showFile(file) {
                 this.path = '/files/' + file.id;
@@ -104,12 +108,14 @@
                 }
                 this.$modal.show('show-file');
             },
-            deleteFile(file, index) {
+            async deleteFile(file, index) {
                 if (confirm("Delete your " + file.name + " file?")) {
-                    axios.delete('/files/' + file.id)
-                        .then(response => {
-                            this.files.splice(index, 1);
-                        })
+                    try {
+                        this.filesService.deleteFile(file.id);
+                        this.files.splice(index, 1);
+                    } catch (error) {
+                        this.errors = ['Error deleting the file'];
+                    }
                 }
             }
         }
