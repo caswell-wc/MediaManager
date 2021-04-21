@@ -2090,11 +2090,12 @@ function _asyncToGenerator(fn) { return function () { var self = this, args = ar
                 _this2.files.push(file);
 
                 _this2.uploading = false;
-                _context2.next = 15;
+                _this2.newName = '';
+                _context2.next = 16;
                 break;
 
-              case 10:
-                _context2.prev = 10;
+              case 11:
+                _context2.prev = 11;
                 _context2.t0 = _context2["catch"](2);
                 errors = _context2.t0.errors;
                 Object.keys(errors).forEach(function (key) {
@@ -2102,12 +2103,12 @@ function _asyncToGenerator(fn) { return function () { var self = this, args = ar
                 });
                 _this2.errors = _context2.t0.errors.file;
 
-              case 15:
+              case 16:
               case "end":
                 return _context2.stop();
             }
           }
-        }, _callee2, null, [[2, 10]]);
+        }, _callee2, null, [[2, 11]]);
       }))();
     },
     showFile: function showFile(file) {

@@ -92,6 +92,7 @@
                     const file = await this.filesService.uploadFile(this.newName, this.newFile);
                     this.files.push(file);
                     this.uploading = false;
+                    this.newName = '';
                 } catch (error) {
                     const errors = error.errors;
                     Object.keys(errors).forEach(key => {
