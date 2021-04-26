@@ -22,3 +22,9 @@ This is a simple application for uploading .jpg and .mp4 files
 10. You should now be able to access your site. 
     1. If you are using Valet and have your folder parked correctly, you should be able to just go to mediamanager.test.
 11. Once you are on the site, you will need to register a new user. Then you can proceed to login and use the app.
+
+## Running Tests
+This app has both frontend and backend tests. To run those tests in the command line you can open the project root in a
+terminal and run the following commands:
+ - `npm test` (frontend)
+ - `vendor/bin/phpunit` (backend)

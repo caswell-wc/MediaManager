@@ -83,6 +83,8 @@ class FilesController extends Controller
      */
     public function delete(File $file)
     {
+        $this->authorize('delete', $file);
+
         Storage::disk('s3')->delete($file->path);
         $file->delete();
         return response()->json(['message' => 'File Deleted'], 202);

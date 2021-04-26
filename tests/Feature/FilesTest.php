@@ -112,6 +112,22 @@ class FilesTest extends TestCase
     }
 
     /** @test */
+    public function aUserCannotDeleteAnotherUsersFile()
+    {
+        $this->signIn();
+        $otherUser = factory(User::class)->create();
+
+        $file = factory(File::class)->create(
+            [
+                'user_id' => $otherUser->id
+            ]
+        );
+
+        $this->delete('/files/' . $file->id)
+            ->assertStatus(403);
+    }
+
+    /** @test */
     public function aUserCannotViewOtherPeoplesFiles()
     {
         $this->signIn();
@@ -123,7 +139,8 @@ class FilesTest extends TestCase
             ]
         );
 
-        $this->get('/files/' . $file->id)->assertStatus(403);
+        $this->get('/files/' . $file->id)
+            ->assertStatus(403);
     }
 
     /** @test */

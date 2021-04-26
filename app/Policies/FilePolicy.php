@@ -12,13 +12,25 @@ class FilePolicy
 
 
     /**
-     * Determine whether the user can view the model.
+     * Determine whether the user can view a file.
      *
-     * @param  \App\User  $user
-     * @param  \App\File  $file
-     * @return mixed
+     * @param User $user
+     * @param File $file
+     * @return bool
      */
-    public function view(User $user, File $file)
+    public function view(User $user, File $file): bool
+    {
+        return $file->user_id == $user->id;
+    }
+
+    /**
+     * Determine whether the user can delete a file
+     *
+     * @param User $user
+     * @param File $file
+     * @return bool
+     */
+    public function delete(User $user, File $file): bool
     {
         return $file->user_id == $user->id;
     }
